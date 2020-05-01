@@ -52,7 +52,7 @@ public class ParkingServiceTest {
 
 			when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
 			when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-
+			
 			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 
 			parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -66,15 +66,17 @@ public class ParkingServiceTest {
 	public void processExitingVehicleTest() {
 		parkingService.processExitingVehicle();
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
-
+		
 	}
 
 	@Test
 	public void processExitingRegularUserVehicleTest() {
 		when(ticketDAO.checkRegularUser("ABCDEF")).thenReturn(true);
+		
+		
 		parkingService.processExitingVehicle();
-		verify(ticketDAO, Mockito.times(1)).checkRegularUser(any(String.class));
-		assertEquals(1.42,1.42);
+		verify(ticketDAO, Mockito.timeout(1)).checkRegularUser((any(String.class)));
+		assertEquals(1.4249999999999998,ticketDAO.getTicket("ABCDEF").getPrice());
 	}
 
 }
