@@ -77,5 +77,10 @@ public class ParkingDataBaseIT {
 		}
 		assertTrue(isRegistered);
 	}
-
+	
+	
+/*@Test
+	//availability parkingspot
+	 * @Test regular user
+	 */
 }

@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem;
 
+import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -38,6 +39,8 @@ public class ParkingServiceTest {
 	private static TicketDAO ticketDAO;
 	@Mock
 	private static FareCalculatorService fareCalculatorService;
+	@Mock
+	private static Fare fare;
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -72,11 +75,8 @@ public class ParkingServiceTest {
 	@Test
 	public void processExitingRegularUserVehicleTest() {
 		when(ticketDAO.checkRegularUser("ABCDEF")).thenReturn(true);
-		
-		
 		parkingService.processExitingVehicle();
-		verify(ticketDAO, Mockito.timeout(1)).checkRegularUser((any(String.class)));
-		assertEquals(1.4249999999999998,ticketDAO.getTicket("ABCDEF").getPrice());
+		assertEquals(1.42,ticketDAO.getTicket("ABCDEF").getPrice(),0.01);
 	}
 
 }
