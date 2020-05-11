@@ -1,9 +1,11 @@
 package com.parkit.parkingsystem.integration;
 
+import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
+import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -77,10 +79,30 @@ public class ParkingDataBaseIT {
 		}
 		assertTrue(isRegistered);
 	}
+
+	@Test
+	public void testIfRegularUserCheckMethodIsCalled() {
+		testParkingACar();
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		parkingService.processExitingVehicle();
+		testParkingACar();
+		parkingService.processExitingVehicle();
+
+		boolean isRegular = ticketDAO.checkRegularUser("ABCDEF");
+		assertTrue(isRegular);
+
+	}
+
+	@Test
+	public void testIfParkingSpotIsAvailableAfterExiting() {
+		testParkingACar();
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		parkingService.processExitingVehicle();
+		ParkingType parkingType = ticketDAO.getTicket("ABCDEF").getParkingSpot().getParkingType();
+		int i = parkingSpotDAO.getNextAvailableSlot(parkingType);
+		assertEquals(i,ticketDAO.getTicket("ABCDEF").getParkingSpot().getId());
+		
+	}
+
 	
-	
-/*@Test
-	//availability parkingspot
-	 * @Test regular user
-	 */
 }
