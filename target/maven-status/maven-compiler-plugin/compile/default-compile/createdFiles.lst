@@ -1,4 +1,5 @@
 com/parkit/parkingsystem/dao/ParkingSpotDAO.class
+com/parkit/parkingsystem/config/DataBaseAccessProvider.class
 com/parkit/parkingsystem/model/Ticket.class
 com/parkit/parkingsystem/model/ParkingSpot.class
 com/parkit/parkingsystem/config/DataBaseConfig.class
