@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -38,7 +40,9 @@ public class ParkingServiceTest {
 
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 			Ticket ticket = new Ticket();
-			ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+			//ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+			ticket.setInTime(null);
+			ticket.setInTime(Instant.now().minusMillis(60*60*1000).truncatedTo(ChronoUnit.SECONDS));
 			ticket.setParkingSpot(parkingSpot);
 			ticket.setVehicleRegNumber("ABCDEF");
 
