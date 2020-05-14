@@ -9,6 +9,8 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class ParkingService {
@@ -36,7 +38,7 @@ public class ParkingService {
 				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
 															// false
 
-				Date inTime = new Date();
+				Instant inTime = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 				Ticket ticket = new Ticket();
 				// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 				// ticket.setId(ticketID);
@@ -103,7 +105,7 @@ public class ParkingService {
 			String vehicleRegNumber = getVehichleRegNumber();
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
 			Boolean isRegular = ticketDAO.checkRegularUser(vehicleRegNumber);
-			Date outTime = new Date();
+			Instant outTime = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 			ticket.setOutTime(outTime);
 			if (isRegular) {
 				fareCalculatorService.calculateRegularUsersReducedFare(ticket);

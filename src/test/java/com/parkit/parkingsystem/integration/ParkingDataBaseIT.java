@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.Date;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,9 +73,9 @@ public class ParkingDataBaseIT {
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
 		boolean isRegistered = false;
-		Date date = ticketDAO.getTicket("ABCDEF").getOutTime();
+		Instant instant = ticketDAO.getTicket("ABCDEF").getOutTime();
 		Double fare = ticketDAO.getTicket("ABCDEF").getPrice();
-		if (fare != null && date != null) {
+		if (fare != null && instant != null) {
 			isRegistered = true;
 		}
 		assertTrue(isRegistered);

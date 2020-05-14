@@ -10,12 +10,12 @@ public class FareCalculatorService {
 
 
 	public void calculateFare(Ticket ticket) {
-		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
+		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 		
-		Instant dIn = ticket.getInTime().toInstant();
-		Instant dOut = ticket.getOutTime().toInstant();
+		Instant dIn = ticket.getInTime();
+		Instant dOut = ticket.getOutTime();
 
 		long duration = Duration.between(dIn, dOut).toMinutes();
 
@@ -40,12 +40,12 @@ public class FareCalculatorService {
 	}
 	
 	public void calculateRegularUsersReducedFare(Ticket ticket) {
-		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
+		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 
-		Instant dIn = ticket.getInTime().toInstant();
-		Instant dOut = ticket.getOutTime().toInstant();
+		Instant dIn = ticket.getInTime();
+		Instant dOut = ticket.getOutTime();
 
 		long duration = Duration.between(dIn, dOut).toMinutes();
 
