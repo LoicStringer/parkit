@@ -1,9 +1,16 @@
 package com.parkit.parkingsystem.model;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Date;
 
+
+/**
+ * Can be compared to a bill containing necessary informations <br/>
+ * to set the parking pricing when exiting.
+ * <p>Constructed of an Id (int), a {@link ParkingSpot}, a vehicleRegNumber (String),
+ * a price (double) and two {@link Instant} instances, "inTime" and "outTime".
+ * @author newbie
+ *
+ */
 public class Ticket {
     private int id;
     private ParkingSpot parkingSpot;

@@ -2,6 +2,13 @@ package com.parkit.parkingsystem.model;
 
 import com.parkit.parkingsystem.constants.ParkingType;
 
+/**
+ * Represents a parking space according to the vehicle type.<br/>
+ * Constructed of a number as Id (int), a vehicle type {@link ParkingType}<br/>
+ * and its availability (boolean).
+ * @author newbie
+ *
+ */
 public class ParkingSpot {
     private int number;
     private ParkingType parkingType;

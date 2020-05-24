@@ -288,7 +288,7 @@ public class FareCalculatorServiceTest {
 
 		@Test
 		@DisplayName("Calculate car fare for a less than a second parking time")
-		public void calculateFareForALessThanASecondCarParkinTime() {
+		public void calculateFareForALessThanASecondCarParkingTime() {
 			Instant inTime = Instant.now().minusMillis((999));
 			Instant outTime = Instant.now();
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);

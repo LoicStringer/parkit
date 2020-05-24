@@ -36,7 +36,7 @@ CREATE TABLE `parking` (
 
 LOCK TABLES `parking` WRITE;
 /*!40000 ALTER TABLE `parking` DISABLE KEYS */;
-INSERT INTO `parking` VALUES (1,0,'CAR'),(2,1,'CAR'),(3,1,'CAR'),(4,1,'BIKE'),(5,1,'BIKE');
+INSERT INTO `parking` VALUES (1,1,'CAR'),(2,1,'CAR'),(3,1,'CAR'),(4,1,'BIKE'),(5,1,'BIKE');
 /*!40000 ALTER TABLE `parking` ENABLE KEYS */;
 UNLOCK TABLES;
 

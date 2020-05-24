@@ -11,8 +11,15 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
+
+/**
+ * This class stands as the application core, providing the application process main methods.
+ * Constructed of an {@link InputReaderUtil} as the temporary interface utility,
+ * and the two DAO's, {@link TicketDAO} and {@link ParkingSpotDAO}.
+ * @author newbie
+ *
+ */
 public class ParkingService {
 
 	private static final Logger logger = LogManager.getLogger("ParkingService");
@@ -35,7 +42,7 @@ public class ParkingService {
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
 				String vehicleRegNumber = getVehichleRegNumber();
 				parkingSpot.setAvailable(false);
-				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
+				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and sets its availability as
 															// false
 
 				Instant inTime = Instant.now().truncatedTo(ChronoUnit.SECONDS);
