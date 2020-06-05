@@ -31,6 +31,7 @@ public class ParkingServiceTest {
 	private static ParkingSpotDAO parkingSpotDAO;
 	@Mock
 	private static TicketDAO ticketDAO;
+	
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -39,8 +40,6 @@ public class ParkingServiceTest {
 
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 			Ticket ticket = new Ticket();
-			//ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
-			ticket.setInTime(null);
 			ticket.setInTime(Instant.now().minusMillis(60*60*1000).truncatedTo(ChronoUnit.SECONDS));
 			ticket.setParkingSpot(parkingSpot);
 			ticket.setVehicleRegNumber("ABCDEF");
@@ -64,7 +63,7 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processExitingRegularUserVehicleTest() {
+	public void processExitingRegularUserVehicleTest() {	
 		when(ticketDAO.checkRegularUser("ABCDEF")).thenReturn(true);
 		parkingService.processExitingVehicle();
 		assertEquals(0.71, ticketDAO.getTicket("ABCDEF").getPrice(), 0.01);

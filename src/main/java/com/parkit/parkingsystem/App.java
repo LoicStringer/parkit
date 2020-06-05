@@ -9,7 +9,6 @@ public class App {
 	/**
 	 * Application entry point
 	 */
-	
     private static final Logger logger = LogManager.getLogger("App");
     public static void main(String args[]){
         logger.info("Initializing Parking System");

@@ -41,7 +41,6 @@ public class FareCalculatorServiceTest {
 	@DisplayName("Exceptions Checking")
 	class ExceptionsTests {
 
-	
 		@Test
 		@DisplayName("When no vehicle type has been registered")
 		public void calculateUnknownTypeFare() {
