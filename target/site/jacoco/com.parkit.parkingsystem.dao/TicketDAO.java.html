@@ -12,119 +12,168 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 
-<span class="nc" id="L20">public class TicketDAO {</span>
+<span class="fc" id="L18">public class TicketDAO {</span>
 
-<span class="fc" id="L22">	private static final Logger logger = LogManager.getLogger(&quot;TicketDAO&quot;);</span>
+<span class="fc" id="L20">	private static final Logger logger = LogManager.getLogger(&quot;TicketDAO&quot;);</span>
 
-<span class="nc" id="L24">	public DataBaseConfig dataBaseConfig = new DataBaseConfig();</span>
+	//Set up the database access
+<span class="fc" id="L23">	public DataBaseConfig dataBaseConfig = new DataBaseConfig();</span>
 
+	/**
+	 * 
+	 * Called when the vehicle is incoming the parking site.&lt;br/&gt;
+	 * Register required ticket data into the database:&lt;br/&gt;
+	 * Auto-increment ID,PARKING_NUMBER,VEHICLE_REG_NUMBER,PRICE,IN_TIME and OUT_TIME.&lt;br/&gt;
+	 * Using the try-with-resources statement which automatically closes resources.
+	 * Exceptions are handled globally.
+	 * 
+	 * @param a {@link Ticket} instance.
+	 * @return true if succeed.
+	 * @throws SQLException.
+	 * @see com.parkit.parkingsystem.service.ParkingService
+	 */
 	public boolean saveTicket(Ticket ticket) {
-<span class="nc" id="L27">		Connection con = null;</span>
+<span class="fc" id="L39">		Connection con = null;</span>
 		try {
-<span class="nc" id="L29">			con = dataBaseConfig.getConnection();</span>
-<span class="nc" id="L30">			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);</span>
-			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-			// ps.setInt(1,ticket.getId());
-<span class="nc" id="L33">			try (ps) {</span>
-<span class="nc" id="L34">				ps.setInt(1, ticket.getParkingSpot().getId());</span>
-<span class="nc" id="L35">				ps.setString(2, ticket.getVehicleRegNumber());</span>
-<span class="nc" id="L36">				ps.setDouble(3, ticket.getPrice());</span>
-<span class="nc" id="L37">				ps.setTimestamp(4, java.sql.Timestamp.from(ticket.getInTime()));</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">				ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : java.sql.Timestamp.from(ticket.getOutTime()));</span>
-
-				// ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
-				// ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new
-				// Timestamp(ticket.getOutTime().getTime())));
-<span class="nc" id="L43">				return ps.execute();</span>
+<span class="fc" id="L41">			con = dataBaseConfig.getConnection();</span>
+<span class="fc" id="L42">			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);</span>
+<span class="fc" id="L43">			try (ps) {</span>
+<span class="fc" id="L44">				ps.setInt(1, ticket.getParkingSpot().getId());</span>
+<span class="fc" id="L45">				ps.setString(2, ticket.getVehicleRegNumber());</span>
+<span class="fc" id="L46">				ps.setDouble(3, ticket.getPrice());</span>
+<span class="fc" id="L47">				ps.setTimestamp(4, java.sql.Timestamp.from(ticket.getInTime()));</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">				ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : java.sql.Timestamp.from(ticket.getOutTime()));</span>
+				
+<span class="fc" id="L50">				return ps.execute();</span>
 			}
-<span class="nc" id="L45">		} catch (Exception ex) {</span>
-<span class="nc" id="L46">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
+<span class="nc" id="L52">		}catch (SQLException ex) {</span>
+<span class="nc" id="L53">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
+<span class="nc" id="L54">		} catch (Exception ex) {</span>
+<span class="nc" id="L55">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
 		} finally {
-<span class="nc" id="L48">			dataBaseConfig.closeConnection(con);</span>
+<span class="fc" id="L57">			dataBaseConfig.closeConnection(con);</span>
 		}
-<span class="nc" id="L50">		return false;</span>
+<span class="nc" id="L59">		return false;</span>
 	}
 
+	
+	/**
+	 * Called when the vehicle is exiting the parking site.&lt;br/&gt;
+	 * Display the required data selected from the database:&lt;br/&gt;
+	 * Auto-increment ID,PARKING_NUMBER,VEHICLE_REG_NUMBER,PRICE,IN_TIME and OUT_TIME.&lt;br/&gt;
+	 * Using the try-with-resources statement which automatically closes resources.
+	 * Exceptions are handled globally.
+	 * 
+	 * @param the exiting vehicle's vehicleRegNumber as a {@link String}
+	 * @return a {@link Ticket} instance.
+	 * @throws SQLException.
+	 * @see com.parkit.parkingsystem.service.ParkingService
+	 */
 	public Ticket getTicket(String vehicleRegNumber) {
-<span class="nc" id="L54">		Connection con = null;</span>
-<span class="nc" id="L55">		Ticket ticket = null;</span>
+<span class="fc" id="L76">		Connection con = null;</span>
+<span class="fc" id="L77">		Ticket ticket = null;</span>
 		try {
-<span class="nc" id="L57">			con = dataBaseConfig.getConnection();</span>
-<span class="nc" id="L58">			PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);</span>
-			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-<span class="nc" id="L60">			try (ps) {</span>
-<span class="nc" id="L61">				ps.setString(1, vehicleRegNumber);</span>
-<span class="nc" id="L62">				ResultSet rs = ps.executeQuery();</span>
-<span class="nc" id="L63">				try (rs) {</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">					if (rs.next()) {</span>
-<span class="nc" id="L65">						ticket = new Ticket();</span>
-<span class="nc" id="L66">						ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)),</span>
+<span class="fc" id="L79">			con = dataBaseConfig.getConnection();</span>
+<span class="fc" id="L80">			PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);</span>
+<span class="fc" id="L81">			try (ps) {</span>
+<span class="fc" id="L82">				ps.setString(1, vehicleRegNumber);</span>
+<span class="fc" id="L83">				ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L84">				try (rs) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">					if (rs.next()) {</span>
+<span class="fc" id="L86">						ticket = new Ticket();</span>
+<span class="fc" id="L87">						ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)),</span>
 								false);
-<span class="nc" id="L68">						ticket.setParkingSpot(parkingSpot);</span>
-<span class="nc" id="L69">						ticket.setId(rs.getInt(2));</span>
-<span class="nc" id="L70">						ticket.setVehicleRegNumber(vehicleRegNumber);</span>
-<span class="nc" id="L71">						ticket.setPrice(rs.getDouble(3));</span>
-<span class="nc" id="L72">						ticket.setInTime(rs.getTimestamp(4).toInstant().truncatedTo(ChronoUnit.SECONDS));</span>
-<span class="nc" id="L73">						ticket.setOutTime(rs.getTimestamp(5).toInstant().truncatedTo(ChronoUnit.SECONDS));</span>
+<span class="fc" id="L89">						ticket.setParkingSpot(parkingSpot);</span>
+<span class="fc" id="L90">						ticket.setId(rs.getInt(2));</span>
+<span class="fc" id="L91">						ticket.setVehicleRegNumber(vehicleRegNumber);</span>
+<span class="fc" id="L92">						ticket.setPrice(rs.getDouble(3));</span>
+<span class="fc" id="L93">						ticket.setInTime(rs.getTimestamp(4).toInstant().truncatedTo(ChronoUnit.SECONDS));</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">						ticket.setOutTime(rs.getTimestamp(5)== null ? null : rs.getTimestamp(5).toInstant().truncatedTo(ChronoUnit.SECONDS));</span>
 					}
 				}
 			}
-			// dataBaseConfig.closeResultSet(rs);
-			// dataBaseConfig.closePreparedStatement(ps);
-<span class="nc" id="L79">		} catch (Exception ex) {</span>
-<span class="nc" id="L80">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
-		} finally {
-<span class="nc" id="L82">			dataBaseConfig.closeConnection(con);</span>
+<span class="nc" id="L98">		} catch ( SQLException ex ) {</span>
+<span class="nc" id="L99">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
+<span class="nc" id="L100">		} catch ( Exception ex){</span>
+<span class="nc" id="L101">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
 		}
-<span class="nc" id="L84">		return ticket;</span>
+		finally {
+<span class="fc" id="L104">			dataBaseConfig.closeConnection(con);</span>
+		}
+<span class="fc" id="L106">		return ticket;</span>
 	}
-
+	
+	/**
+	 * Called when the vehicle is exiting the parking site.&lt;br/&gt;
+	 * Updating required ticket data in the database:&lt;br/&gt;
+	 * PRICE, OUT_TIME and ID.
+	 * Using the try-with-resources statement which automatically closes resources.
+	 * Exceptions are handled globally.
+	 * @param a {@link Ticket} instance.
+	 * @return true if succeed.
+	 * @throws SQLException.
+	 * @see {@link com.parkit.parkingsystem.service.ParkingService}.
+	 */
 	public boolean updateTicket(Ticket ticket) {
-<span class="nc" id="L88">		Connection con = null;</span>
+<span class="fc" id="L121">		Connection con = null;</span>
 		try {
-<span class="nc" id="L90">			con = dataBaseConfig.getConnection();</span>
-<span class="nc" id="L91">			PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);</span>
-<span class="nc" id="L92">			try (ps) {</span>
-<span class="nc" id="L93">				ps.setDouble(1, ticket.getPrice());</span>
-<span class="nc" id="L94">				ps.setTimestamp(2, java.sql.Timestamp.from(ticket.getInTime()));</span>
-<span class="nc" id="L95">				ps.setInt(3, ticket.getId());</span>
-<span class="nc" id="L96">				ps.execute();</span>
-<span class="nc" id="L97">				return true;</span>
+<span class="fc" id="L123">			con = dataBaseConfig.getConnection();</span>
+<span class="fc" id="L124">			PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);</span>
+<span class="fc" id="L125">			try (ps) {</span>
+<span class="fc" id="L126">				ps.setDouble(1, ticket.getPrice());</span>
+<span class="fc" id="L127">				ps.setTimestamp(2, java.sql.Timestamp.from(ticket.getOutTime()));</span>
+<span class="fc" id="L128">				ps.setInt(3, ticket.getId());</span>
+<span class="fc" id="L129">				ps.execute();</span>
+<span class="fc" id="L130">				return true;</span>
 			}
-<span class="nc" id="L99">		} catch (Exception ex) {</span>
-<span class="nc" id="L100">			logger.error(&quot;Error saving ticket info&quot;, ex);</span>
+<span class="nc" id="L132">		}catch (SQLException ex) {</span>
+<span class="nc" id="L133">			logger.error(&quot;Error saving ticket info&quot;, ex);</span>
+<span class="nc" id="L134">		} catch (Exception ex) {</span>
+<span class="nc" id="L135">			logger.error(&quot;Error saving ticket info&quot;, ex);</span>
 		} finally {
-<span class="nc" id="L102">			dataBaseConfig.closeConnection(con);</span>
+<span class="fc" id="L137">			dataBaseConfig.closeConnection(con);</span>
 		}
-<span class="nc" id="L104">		return false;</span>
+<span class="nc" id="L139">		return false;</span>
 	}
 
+	/**
+	 * Called when the vehicle is exiting the parking site.&lt;br/&gt;
+	 * Checking if the vehicle has already been registered before.
+	 * Using the try-with-resources statement which automatically closes resources.
+	 * Exceptions are handled globally.
+	 * 
+	 * @param the exiting vehicle's vehicleRegNumber as a {@link String}
+	 * @return true if the vehicleRegNumber is found more than once in the database.
+	 * @throws SQLException.
+	 * @see {@link com.parkit.parkingsystem.service.ParkingService}
+	 */
+	
 	public boolean checkRegularUser(String vehicleRegNumber) {
-<span class="nc" id="L108">		Connection con = null;</span>
+<span class="fc" id="L155">		Connection con = null;</span>
 		try {
-<span class="nc" id="L110">			con = dataBaseConfig.getConnection();</span>
-			
-<span class="nc" id="L112">			try (CallableStatement cs = con.prepareCall(DBConstants.CHECK_REGULAR_USER)) {</span>
-<span class="nc" id="L113">				cs.setString(1, vehicleRegNumber);</span>
-<span class="nc" id="L114">				cs.registerOutParameter(2, java.sql.Types.INTEGER);</span>
-<span class="nc" id="L115">				cs.execute();</span>
+<span class="fc" id="L157">			con = dataBaseConfig.getConnection();</span>
+<span class="fc" id="L158">			CallableStatement cs = con.prepareCall(DBConstants.CHECK_REGULAR_USER);</span>
+<span class="fc" id="L159">			try (cs) {</span>
+<span class="fc" id="L160">				cs.setString(1, vehicleRegNumber);</span>
+<span class="fc" id="L161">				cs.registerOutParameter(2, java.sql.Types.INTEGER);</span>
+<span class="fc" id="L162">				cs.execute();</span>
 
-<span class="nc" id="L117">				int isRegular = cs.getInt(2);</span>
+<span class="fc" id="L164">				int isRegular = cs.getInt(2);</span>
 
-<span class="nc bnc" id="L119" title="All 2 branches missed.">				if (isRegular &gt; 1)</span>
-<span class="nc" id="L120">					return true;</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">			}</span>
-<span class="nc" id="L122">		} catch (Exception ex) {</span>
-<span class="nc" id="L123">			logger.error(&quot;Error looking for ticket info&quot;, ex);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">				if (isRegular &gt; 1)</span>
+<span class="fc" id="L167">					return true;</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">			}</span>
+<span class="nc" id="L169">		}catch (SQLException ex) {</span>
+<span class="nc" id="L170">			logger.error(&quot;Error looking for ticket info&quot;, ex);</span>
+<span class="nc" id="L171">		} catch (Exception ex) {</span>
+<span class="nc" id="L172">			logger.error(&quot;Error looking for ticket info&quot;, ex);</span>
 		} finally {
-<span class="nc" id="L125">			dataBaseConfig.closeConnection(con);</span>
+<span class="fc" id="L174">			dataBaseConfig.closeConnection(con);</span>
 		}
-<span class="nc" id="L127">		return false;</span>
+<span class="fc" id="L176">		return false;</span>
 	}
 
 }

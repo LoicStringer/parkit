@@ -4,9 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.Properties;
 
 public class DataBaseConfig {
+	
+	/**
+	 *  Connection methods class.
+	 */
 
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");
     
@@ -17,8 +20,6 @@ public class DataBaseConfig {
         Class.forName("com.mysql.cj.jdbc.Driver");
         DataBaseAccessProvider dbap = new DataBaseAccessProvider();
         return DriverManager.getConnection(dbap.getProdDbUrl(),dbap.getUser(),dbap.getPassword());
-        		
-              // "jdbc:mysql://localhost:3306/prod?serverTimezone = CET","root","Morgane190813*");
     }
 
     public void closeConnection(Connection con){
