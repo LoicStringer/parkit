@@ -6,14 +6,20 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 
 public class DataBaseConfig {
+	
+	/**
+	 *  Connection methods class.
+	 */
 
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-
+    
+    
+    
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/prod","root","rootroot");
+        DataBaseAccessProvider dbap = new DataBaseAccessProvider();
+        return DriverManager.getConnection(dbap.getProdDbUrl(),dbap.getUser(),dbap.getPassword());
     }
 
     public void closeConnection(Connection con){

@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.integration.config;
 
+import com.parkit.parkingsystem.config.DataBaseAccessProvider;
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +14,10 @@ public class DataBaseTestConfig extends DataBaseConfig {
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/test","root","rootroot");
+        DataBaseAccessProvider dbap = new DataBaseAccessProvider();
+        return DriverManager.getConnection(dbap.getTestDbUrl(),dbap.getUser(),dbap.getPassword());
+        		
+               //"jdbc:mysql://localhost:3306/test?serverTimezone = CET","root","Morgane190813*");
     }
 
     public void closeConnection(Connection con){
